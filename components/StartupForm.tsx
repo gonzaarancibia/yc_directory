@@ -13,9 +13,54 @@ import { createPitch } from "@/lib/actions";
 
 const StartupForm: NextPage = ({}) => {
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [imageError, setImageError] = useState<string | null>(null);
+
   const [pitch, setPitch] = useState("");
   const { toast } = useToast();
   const router = useRouter();
+
+  const validateImageURL = (url: string): Promise<boolean> => {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.src = url;
+
+      img.onload = () => resolve(true);
+
+      img.onerror = () => resolve(false);
+    });
+  };
+
+  const handleImageBlur = async (event: React.FocusEvent<HTMLInputElement>) => {
+    const url = event.target.value;
+
+    if (url) {
+      try {
+        const isImageValid = await validateImageURL(url);
+
+        if (!isImageValid) {
+          setImageError(
+            "The URL does not point to a valid image. Please check the link."
+          );
+          toast({
+            title: "Error",
+            description:
+              "The URL does not point to a valid image. Please check the link.",
+            variant: "destructive",
+          });
+        } else {
+          setImageError(null);
+        }
+      } catch (error) {
+        console.error(error);
+        setImageError("An error occurred while validating the image URL.");
+        toast({
+          title: "Error",
+          description: "An error occurred while validating the image URL.",
+          variant: "destructive",
+        });
+      }
+    }
+  };
 
   const handleFormSubmit = async (prevState: any, formData: FormData) => {
     try {
@@ -28,7 +73,6 @@ const StartupForm: NextPage = ({}) => {
       };
 
       await formSchema.parseAsync(formValues);
-      console.log("formavlues", formValues);
 
       const result = await createPitch(prevState, formData, pitch);
       if (result.status == "SUCCESS") {
@@ -135,8 +179,11 @@ const StartupForm: NextPage = ({}) => {
           className="startup-form_input"
           required
           placeholder="Startup Image URL"
+          onBlur={handleImageBlur}
         />
-        {errors.link && <p className="startup-form_error">{errors.link}</p>}
+        {(errors.link || imageError) && (
+          <p className="startup-form_error">{errors.link || imageError}</p>
+        )}
       </div>
 
       <div data-color-mode="light">
