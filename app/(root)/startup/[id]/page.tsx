@@ -26,12 +26,14 @@ export const experiemental_ppr = true;
 const Page: NextPage<Props> = async ({ params }) => {
   const id = (await params).id;
 
-  const [post, { select: editorPosts }] = await Promise.all([
+  const [post, editorData] = await Promise.all([
     client.fetch(STARTUPS_BY_ID_QUERY, { id }),
     client.fetch(PLAYLIST_BY_SLUG_QUERY, {
       slug: "editor-picks-v2",
     }),
   ]);
+
+  const editorPosts = editorData?.select || [];
 
   if (!post) return notFound();
 
