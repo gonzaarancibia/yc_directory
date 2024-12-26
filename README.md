@@ -172,9 +172,11 @@ Open [http://localhost:3000](http://localhost:3000) in your browser to view the 
 
 <div align="center">
   <br />
-    <a href="https://youtu.be/Zq5fmkH0T78?feature=shared" target="_blank">
       <img src="https://github.com/user-attachments/assets/471e2baa-8781-43b8-aaed-62e313d03e99" alt="Project Banner">
-    </a>
+  <br />
+  <img src="./assets/profile.png" alt="Project Home">
+  <br />
+  <img src="./assets/home-cards.png" alt="Project Home">
   <br />
 </div>
 
